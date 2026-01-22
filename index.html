@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Profit Maker Comeback</title>
+
+<style>
+body{
+  background:#000;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
+
+#title{
+  font-size:32px;
+  color:yellow;
+  text-shadow:0 0 10px yellow,0 0 20px gold;
+  margin-top:20px;
+}
+
+.box{
+  border:1px solid #444;
+  margin:15px;
+  padding:15px;
+  border-radius:10px;
+  background:#111;
+}
+
+#prediction{
+  font-size:28px;
+  margin:20px;
+  color:yellow;
+  text-shadow:0 0 10px yellow,0 0 20px gold;
+}
+
+button{
+  padding:10px 20px;
+  font-size:18px;
+  margin:10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.win{background:green;color:white;}
+.loss{background:red;color:white;}
+
+#msg{color:orange;margin-top:10px;}
+
+.history{
+  max-height:150px;
+  overflow:auto;
+  text-align:left;
+  padding-left:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="title">✨ PROFIT MAKER COMEBACK ✨</div>
+
+<div class="box">
+  <div>⏳ Time Left : <span id="timer">60</span> sec</div>
+  <div id="prediction">WAITING...</div>
+</div>
+
+<div class="box">
+  💰 Balance : <span id="balance">100</span><br>
+  🎯 Bet : <span id="bet">100</span><br>
+  🧠 Level : <span id="level">1</span><br>
+  🟢 Win : <span id="win">0</span> | 🔴 Loss : <span id="loss">0</span>
+</div>
+
+<div>
+  <button class="win" onclick="win()">WIN</button>
+  <button class="loss" onclick="loss()">LOSS</button>
+</div>
+
+<div id="msg"></div>
+
+<div class="box">
+  <b>Prediction History</b>
+  <div class="history" id="history"></div>
+</div>
+
+<script>
+let balance = 100;
+let baseBet = 100;
+let bet = 100;
+let level = 1;
+let winCount = 0;
+let lossCount = 0;
+let timer = 60;
+let allowClick = false;
+let currentPrediction = "";
+
+// 🔥 STRONG PROFESSIONAL PATTERN ENGINE
+let pattern = ["BIG","BIG","GREEN","BIG","GREEN","GREEN","BIG","GREEN","BIG","BIG"];
+let pointer = 0;
+
+function generatePrediction(){
+  let result = pattern[pointer];
+  pointer++;
+  if(pointer >= pattern.length) pointer = 0;
+
+  currentPrediction = result;
+
+  let pred = document.getElementById("prediction");
+  pred.innerText = "NEXT RESULT : " + result;
+
+  // glow + colour rule
+  if(result == "BIG"){
+    pred.style.color = "green";
+  }else{
+    pred.style.color = "red";
+  }
+
+  pred.style.textShadow = "0 0 10px yellow,0 0 20px gold";
+}
+
+function startTimer(){
+  timer = 60;
+  document.getElementById("timer").innerText = timer;
+
+  let interval = setInterval(()=>{
+    timer--;
+    document.getElementById("timer").innerText = timer;
+
+    if(timer <= 0){
+      clearInterval(interval);
+      allowClick = true;
+      generatePrediction();
+    }
+  },1000);
+}
+
+function win(){
+  if(!allowClick){
+    document.getElementById("msg").innerText = "⚠️ Please wait for next period number";
+    return;
+  }
+
+  balance += bet;
+  winCount++;
+  level++;
+
+  bet = baseBet * level;
+
+  addHistory("WIN");
+  updateDisplay();
+  newRound();
+}
+
+function loss(){
+  if(!allowClick){
+    document.getElementById("msg").innerText = "⚠️ Please wait for next period number";
+    return;
+  }
+
+  // smart recovery system
+  balance -= bet;
+  lossCount++;
+
+  level++;
+  bet = baseBet * level;
+
+  addHistory("LOSS");
+  updateDisplay();
+  newRound();
+}
+
+function addHistory(result){
+  let h = document.getElementById("history");
+  let div = document.createElement("div");
+  div.innerText = currentPrediction + " ➜ " + result;
+  h.prepend(div);
+}
+
+function updateDisplay(){
+  document.getElementById("balance").innerText = balance;
+  document.getElementById("bet").innerText = bet;
+  document.getElementById("level").innerText = level;
+  document.getElementById("win").innerText = winCount;
+  document.getElementById("loss").innerText = lossCount;
+}
+
+function newRound(){
+  allowClick = false;
+  document.getElementById("msg").innerText = "";
+  startTimer();
+}
+
+startTimer();
+</script>
+
+</body>
+</html>
